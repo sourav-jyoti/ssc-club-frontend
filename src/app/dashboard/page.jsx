@@ -26,9 +26,7 @@ export default function DashboardPage() {
     const fetchEvents = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-        console.log("Fetching from:", `${apiUrl}event`);
         const res = await axios.get(`${apiUrl}event`);
-        console.log("Events response:", res.data);
         setData(res.data?.events || []);
       } catch (err) {
         console.error("Failed to fetch events", err);
@@ -60,6 +58,8 @@ export default function DashboardPage() {
 
   const filteredEvents = filterEventsByDate(data, selectedDate);
   const totalEvents = data.length;
+  const Students = 16;
+  const totalCertificates = 16;
 
   if (loading) {
     return <div className="p-6">Loading...</div>;
@@ -73,7 +73,11 @@ export default function DashboardPage() {
 
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Stats..</h2>
-          <StatsCards totalEvents={totalEvents} />
+          <StatsCards
+            totalEvents={totalEvents}
+            totalStudents={Students}
+            totalCertificates={totalCertificates}
+          />
         </div>
 
         <div>

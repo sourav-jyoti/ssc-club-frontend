@@ -23,12 +23,12 @@ function StatCard({ title, value, subtitle, icon, iconBg, subtitleColor }) {
   );
 }
 
-export function StatsCards() {
+export function StatsCards({ totalEvents, totalStudents, totalCertificates }) {
   return (
     <div className="grid grid-cols-3 gap-4">
       <StatCard
         title="Total Events Concluded"
-        value={86}
+        value={totalEvents}
         subtitle="21 this month"
         icon={
           <svg
@@ -49,7 +49,7 @@ export function StatsCards() {
       />
       <StatCard
         title="Total Students Participated"
-        value="1,250"
+        value={totalStudents}
         subtitle="300 this month"
         icon={
           <svg
@@ -70,7 +70,7 @@ export function StatsCards() {
       />
       <StatCard
         title="Certificates Issued"
-        value={560}
+        value={totalCertificates}
         subtitle="92% success rate"
         icon={
           <svg
