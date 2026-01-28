@@ -25,7 +25,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/event");
+        const res = await axios.get(`${process.env.BACKEND_API_URL}/event`);
         setData(res.data?.events);
       } catch (err) {
         console.error("Failed to fetch events", err);

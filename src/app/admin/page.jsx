@@ -4,8 +4,8 @@ import { AdminDashboard } from "@/components/admin/admin-dashboard";
 async function getAdminData() {
   try {
     const [eventsRes, membersRes] = await Promise.all([
-      axios.get("http://localhost:3000/event"),
-      axios.get("http://localhost:3000/members"),
+      axios.get(`${process.env.BACKEND_API_URL}/event`),
+      axios.get(`${process.env.BACKEND_API_URL}/members`),
     ]);
 
     return {
