@@ -7,7 +7,7 @@ async function getAdminData() {
   try {
     // Fetch events (no auth required) and session in parallel
     const [eventsRes, session] = await Promise.all([
-      axios.get(`${process.env.EXT_PUBLIC_BACKEND_API_URL}/event`),
+      axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}event`),
       getServerSession(authOptions),
     ]);
 
@@ -15,7 +15,7 @@ async function getAdminData() {
     let membersRes;
     if (session?.user?.backendToken) {
       membersRes = await axios.get(
-        `${process.env.EXT_PUBLIC_BACKEND_API_URL}/users`,
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/users`,
         {
           headers: {
             Authorization: `Bearer ${session.user.backendToken}`,
