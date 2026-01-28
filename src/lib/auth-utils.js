@@ -54,7 +54,7 @@ export async function verifyOTP(email, otp) {
 
 export async function resendOTP(email) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/register/resend`, {
+    const response = await axios.post(`${API_BASE_URL}auth/register/resend`, {
       email,
     });
 
