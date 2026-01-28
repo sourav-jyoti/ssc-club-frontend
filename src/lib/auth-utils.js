@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.BACKEND_API_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
 export async function loginUser(email, password) {
   try {
@@ -19,12 +19,13 @@ export async function loginUser(email, password) {
 
 export async function registerUser(name, email, password, registrationID) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/register`, {
+    const response = await axios.post(`${API_BASE_URL}auth/register`, {
       name,
       email,
       password,
       registrationID,
     });
+    console.log(API_BASE_URL);
 
     return { success: true, data: response.data };
   } catch (error) {
@@ -36,7 +37,7 @@ export async function registerUser(name, email, password, registrationID) {
 
 export async function verifyOTP(email, otp) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/verify-email`, {
+    const response = await axios.post(`${API_BASE_URL}auth/verify-email`, {
       email,
       otp,
     });

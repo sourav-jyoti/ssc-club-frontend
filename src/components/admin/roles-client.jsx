@@ -31,7 +31,10 @@ const roleIcons = {
   Member: Users,
 };
 
-export function RolesClient({ members = [] }) {
+export function RolesClient({ members: membersProp }) {
+  // Ensure members is always an array
+  const members = Array.isArray(membersProp) ? membersProp : [];
+
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedMember, setSelectedMember] = useState(null);

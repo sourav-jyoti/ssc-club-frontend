@@ -102,7 +102,7 @@ export function CreateEventModal({ isOpen, onClose, onEventCreated }) {
       }
 
       const response = await axios.post(
-        `${process.env.BACKEND_API_URL}/event`,
+        `${process.env.NEXT_PUBLIC_BACKEND_API_URL}/event`,
         submitData,
         {
           headers: {
