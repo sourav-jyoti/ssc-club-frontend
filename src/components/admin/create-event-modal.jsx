@@ -43,6 +43,8 @@ export function CreateEventModal({ isOpen, onClose, onEventCreated }) {
     poster: null,
     gallery: [],
   });
+  const [posterPreview, setPosterPreview] = useState(null);
+  const [galleryPreviews, setGalleryPreviews] = useState([]);
 
   if (!isOpen) return null;
 
@@ -52,10 +54,17 @@ export function CreateEventModal({ isOpen, onClose, onEventCreated }) {
   };
 
   const handleFileChange = (field, files) => {
-    if (field === "poster") {
+    if (field === "poster" && files[0]) {
       setFormData((prev) => ({ ...prev, poster: files[0] }));
-    } else if (field === "gallery") {
-      setFormData((prev) => ({ ...prev, gallery: Array.from(files) }));
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(files[0]);
+      setPosterPreview(previewUrl);
+    } else if (field === "gallery" && files.length > 0) {
+      const filesArray = Array.from(files);
+      setFormData((prev) => ({ ...prev, gallery: filesArray }));
+      // Create preview URLs
+      const previewUrls = filesArray.map((file) => URL.createObjectURL(file));
+      setGalleryPreviews(previewUrls);
     }
   };
 
@@ -202,6 +211,25 @@ export function CreateEventModal({ isOpen, onClose, onEventCreated }) {
                 </p>
               </label>
             </div>
+            {posterPreview && (
+              <div className="relative mt-2">
+                <img
+                  src={posterPreview}
+                  alt="Poster preview"
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPosterPreview(null);
+                    setFormData((prev) => ({ ...prev, poster: null }));
+                  }}
+                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Gallery Upload */}
@@ -233,6 +261,38 @@ export function CreateEventModal({ isOpen, onClose, onEventCreated }) {
                 </p>
               </label>
             </div>
+            {galleryPreviews.length > 0 && (
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {galleryPreviews.map((preview, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={preview}
+                      alt={`Gallery preview ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newPreviews = galleryPreviews.filter(
+                          (_, i) => i !== index,
+                        );
+                        const newGallery = formData.gallery.filter(
+                          (_, i) => i !== index,
+                        );
+                        setGalleryPreviews(newPreviews);
+                        setFormData((prev) => ({
+                          ...prev,
+                          gallery: newGallery,
+                        }));
+                      }}
+                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Title */}
