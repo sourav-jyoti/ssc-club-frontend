@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Upload } from "lucide-react";
+import { updateUserRole } from "@/lib/auth-utils";
 
 const roles = ["Admin", "Organizer", "Coordinator", "Volunteer", "Member"];
 
@@ -63,11 +65,14 @@ const permissions = [
 ];
 
 export function EditRoleModal({ isOpen, onClose, member }) {
+  const { data: session } = useSession();
   const [selectedRole, setSelectedRole] = useState(member.role || "Member");
   const [designation, setDesignation] = useState(member.designation || "");
   const [selectedPermissions, setSelectedPermissions] = useState(
     member.permissions || [],
   );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
@@ -88,15 +93,36 @@ export function EditRoleModal({ isOpen, onClose, member }) {
     );
   };
 
-  const handleSave = () => {
-    // TODO: Implement API call to update member role and permissions
-    console.log({
-      memberId: member._id || member.id,
-      role: selectedRole,
-      designation,
-      permissions: selectedPermissions,
-    });
-    onClose();
+  const handleSave = async () => {
+    if (!session?.user?.backendToken) {
+      setError("Authentication required. Please log in again.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await updateUserRole(
+        member.registrationID,
+        selectedRole.toLowerCase(), // Convert to lowercase: "Admin" -> "admin"
+        session.user.backendToken,
+      );
+
+      if (result.success) {
+        console.log("Role updated successfully:", result.data);
+        onClose();
+        // Optionally trigger a refresh of the members list
+        window.location.reload();
+      } else {
+        setError(result.error || "Failed to update role");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      console.error("Error updating role:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -124,6 +150,12 @@ export function EditRoleModal({ isOpen, onClose, member }) {
 
         {/* Content */}
         <div className="p-6 space-y-6">
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {error}
+            </div>
+          )}
           {/* Member Info */}
           <div className="flex flex-col items-center gap-3">
             <div className="relative group">
@@ -237,9 +269,10 @@ export function EditRoleModal({ isOpen, onClose, member }) {
           </Button>
           <Button
             onClick={handleSave}
-            className="flex-1 bg-blue-500 hover:bg-blue-600"
+            disabled={loading}
+            className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:opacity-50"
           >
-            Save Changes
+            {loading ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </div>

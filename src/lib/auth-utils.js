@@ -66,6 +66,26 @@ export async function resendOTP(email) {
   }
 }
 
+export async function updateUserRole(registrationID, role, authToken) {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}${registrationID}`,
+      { role },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      },
+    );
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message || error.message || "Failed to update role";
+    return { success: false, error: errorMessage };
+  }
+}
+
 export function getRoleBasedRedirect(role) {
   switch (role?.toUpperCase()) {
     case "ADMIN":
