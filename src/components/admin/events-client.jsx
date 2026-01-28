@@ -192,18 +192,29 @@ export function EventsClient({ initialEvents = [] }) {
         >
           {filteredEvents.map((event) => {
             const category = event.category?.toLowerCase() || "other";
+            const posterImage = event.images?.gallery?.[0]?.url;
+
             return (
               <Card
                 key={event._id || event.id}
                 className="overflow-hidden bg-white shadow-sm border-0 hover:shadow-lg transition-shadow"
               >
                 {/* Event Image/Gradient Header */}
-                <div
-                  className={`h-32 bg-gradient-to-br ${categoryGradients[category] || categoryGradients.other} relative`}
-                >
+                <div className="h-32 relative overflow-hidden">
+                  {posterImage ? (
+                    <img
+                      src={posterImage}
+                      alt={event.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className={`w-full h-full bg-gradient-to-br ${categoryGradients[category] || categoryGradients.other}`}
+                    />
+                  )}
                   <Badge
                     variant="outline"
-                    className={`absolute top-3 left-3 ${categoryColors[category] || categoryColors.other} border`}
+                    className={`absolute top-3 left-3 ${categoryColors[category] || categoryColors.other} border backdrop-blur-sm bg-white/90`}
                   >
                     {event.category || "Other"}
                   </Badge>
